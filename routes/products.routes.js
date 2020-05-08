@@ -42,14 +42,14 @@ router.post('/products', (req, res) => {
 router.put('/products/:id', (req, res) => {
   const { name, client } = req.body;
 
-  if (name && client) {
-    req.db.collection('products').updateOne({ _id: ObjectId(req.params.id) }, { $set: { name, client } }, err => {
-      if (err) res.status(500).json({ message: err });
-      else res.json({ message: 'OK' });
-    })
-  } else {
-    res.json({ message: 'You should fulfil all fields' });
-  }
+  const updatedElement = {};
+  name ? updatedElement.name = name : null;
+  client ? updatedElement.client = client : null;
+
+  req.db.collection('products').updateOne({ _id: ObjectId(req.params.id) }, { $set: updatedElement }, err => {
+    if (err) res.status(500).json({ message: err });
+    else res.json({ message: 'OK' });
+  })
 });
 
 router.delete('/products/:id', (req, res) => {

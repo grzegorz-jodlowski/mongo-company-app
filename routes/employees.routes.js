@@ -40,14 +40,15 @@ router.post('/employees', (req, res) => {
 router.put('/employees/:id', (req, res) => {
   const { firstName, lastName, department } = req.body;
 
-  if (firstName && lastName && department) {
-    req.db.collection('employees').updateOne({ _id: ObjectId(req.params.id) }, { $set: { firstName, lastName, department } }, err => {
-      if (err) res.status(500).json({ message: err });
-      else res.json({ message: 'OK' });
-    })
-  } else {
-    res.json({ message: 'You should fulfil all fields' });
-  }
+  const updatedElement = {};
+  firstName ? updatedElement.firstName = firstName : null;
+  lastName ? updatedElement.lastName = lastName : null;
+  department ? updatedElement.department = department : null;
+
+  req.db.collection('employees').updateOne({ _id: ObjectId(req.params.id) }, { $set: updatedElement }, err => {
+    if (err) res.status(500).json({ message: err });
+    else res.json({ message: 'OK' });
+  })
 });
 
 router.delete('/employees/:id', (req, res) => {
