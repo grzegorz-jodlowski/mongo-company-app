@@ -26,6 +26,7 @@ router.get('/employees/:id', (req, res) => {
 
 router.post('/employees', (req, res) => {
   const { firstName, lastName, department } = req.body;
+
   if (firstName && lastName && department) {
     req.db.collection('employees').insertOne({ firstName, lastName, department }, err => {
       if (err) res.status(500).json({ message: err });
@@ -37,7 +38,8 @@ router.post('/employees', (req, res) => {
 });
 
 router.put('/employees/:id', (req, res) => {
-  let { firstName, lastName, department } = req.body;
+  const { firstName, lastName, department } = req.body;
+
   if (firstName && lastName && department) {
     req.db.collection('employees').updateOne({ _id: ObjectId(req.params.id) }, { $set: { firstName, lastName, department } }, err => {
       if (err) res.status(500).json({ message: err });
