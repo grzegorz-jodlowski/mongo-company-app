@@ -1,62 +1,89 @@
-// post.routes.js
-
 const express = require('express');
 const router = express.Router();
-const ObjectId = require('mongodb').ObjectId;
+const Product = require('../models/product.model');
 
-router.get('/products', (req, res) => {
-  req.db.collection('products').find().toArray((err, data) => {
-    if (err) res.status(500).json({ message: err });
-    else res.json(data);
-  });
-});
-
-router.get('/products/random', (req, res) => {
-  req.db.collection('products').aggregate([{ $sample: { size: 1 } }]).toArray((err, data) => {
-    if (err) res.status(500).json({ message: err });
-    else res.json(data[0]);
-  })
-});
-
-router.get('/products/:id', (req, res) => {
-  req.db.collection('products').findOne({ _id: ObjectId(req.params.id) }, (err, data) => {
-    if (err) res.status(500).json({ message: err });
-    else if (!data) res.status(404).json({ message: 'Not found' });
-    else res.json(data);
-  });
-});
-
-router.post('/products', (req, res) => {
-  const { name, client } = req.body;
-
-  if (name && client) {
-    req.db.collection('products').insertOne({ name, client }, err => {
-      if (err) res.status(500).json({ message: err });
-      else res.json({ message: 'OK' });
-    })
-  } else {
-    res.json({ message: 'You should fulfil all fields' });
+router.get('/products', async (req, res) => {
+  try {
+    res.json(await Product.find());
+  } catch (error) {
+    res.status(500).json({ message: 'OK' });
   }
 });
 
-router.put('/products/:id', (req, res) => {
-  const { name, client } = req.body;
+router.get('/products/random', async (req, res) => {
+  try {
+    const count = await Product.countDocuments();
+    const rand = Math.floor(Math.random() * count);
+    const randomProduct = await Product.findOne().skip(rand);
 
-  const updatedElement = {};
-  name ? updatedElement.name = name : null;
-  client ? updatedElement.client = client : null;
-
-  req.db.collection('products').updateOne({ _id: ObjectId(req.params.id) }, { $set: updatedElement }, err => {
-    if (err) res.status(500).json({ message: err });
-    else res.json({ message: 'OK' });
-  })
+    if (randomProduct) {
+      res.json(randomProduct)
+    } else {
+      res.status(404).json({ message: 'Not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
 });
 
-router.delete('/products/:id', (req, res) => {
-  req.db.collection('products').deleteOne({ _id: ObjectId(req.params.id) }, err => {
-    if (err) res.status(500).json({ message: err });
-    else res.json({ message: 'OK' });
-  })
+router.get('/products/:id', async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (product) {
+      res.json(product);
+    } else {
+      res.status(404).json({ message: 'Not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+});
+
+router.post('/products', async (req, res) => {
+  try {
+    const { name, client } = req.body;
+
+    const newProduct = new Product({ name, client });
+    await newProduct.save();
+    res.json({ message: 'OK' });
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+
+});
+
+router.put('/products/:id', async (req, res) => {
+  try {
+    const { name, client } = req.body;
+
+    const updatedElement = {};
+    name ? updatedElement.name = name : null;
+    client ? updatedElement.client = client : null;
+
+    const product = await Product.findById(req.params.id);
+    if (product) {
+      await Product.updateOne({ _id: req.params.id }, { $set: updatedElement });
+      res.json({ message: 'OK' });
+    } else {
+      res.status(404).json({ message: 'OK' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+});
+
+router.delete('/products/:id', async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (product) {
+      await Product.deleteOne({ _id: req.params.id });
+      res.json({ message: 'OK' });
+    } else {
+      res.status(404).json({ message: 'Not Found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
 });
 
 module.exports = router;

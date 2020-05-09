@@ -2,9 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Employee = require('../models/employee.model');
 
-const ObjectId = require('mongodb').ObjectId;
-
-
 router.get('/employees', async (req, res) => {
   try {
     res.json(await Employee.find());
