@@ -4,12 +4,13 @@ const MongoMemoryServer = require('mongodb-memory-server').MongoMemoryServer;
 
 const Department = require('../department.model');
 
+let fakeDB;
 
 describe('Department crud', () => {
   before(async () => {
 
     try {
-      const fakeDB = new MongoMemoryServer();
+      fakeDB = new MongoMemoryServer();
 
       const uri = await fakeDB.getConnectionString();
 
@@ -18,6 +19,11 @@ describe('Department crud', () => {
     } catch (err) {
       console.log(err);
     }
+  });
+
+  after(async () => {
+    await mongoose.disconnect();
+    await fakeDB.stop();
   });
 
   describe('Reading data', () => {
