@@ -31,11 +31,11 @@ describe('Employee crud', () => {
 
   describe('Reading data', () => {
     before(async () => {
-      const testEmployeeOne = new Employee(employeeOne);
-      await testEmployeeOne.save();
+      const firstDbEmployee = new Employee(employeeOne);
+      await firstDbEmployee.save();
 
-      const testEmployeeTwo = new Employee(employeeTwo);
-      await testEmployeeTwo.save();
+      const secondDbEmployee = new Employee(employeeTwo);
+      await secondDbEmployee.save();
     });
 
     after(async () => {
@@ -53,6 +53,18 @@ describe('Employee crud', () => {
       expect(employee.firstName).to.be.equal(employeeOne.firstName);
       expect(employee.lastName).to.be.equal(employeeOne.lastName);
       expect(employee.department).to.be.equal(employeeOne.department);
+    });
+  });
+
+  describe('Creating data', () => {
+    after(async () => {
+      await Employee.deleteMany();
+    });
+
+    it('should insert new document with "insertOne" method', async () => {
+      const employee = new Employee(employeeOne);
+      await employee.save();
+      expect(employee.isNew).to.be.false;
     });
   });
 
