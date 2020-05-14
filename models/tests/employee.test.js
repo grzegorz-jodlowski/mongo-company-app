@@ -3,10 +3,6 @@ const mongoose = require('mongoose');
 
 const Employee = require('../employee.model');
 
-after(() => {
-  mongoose.models = {};
-});
-
 describe('Employee', () => {
   const args = ['firstName', 'lastName', 'department'];
 
