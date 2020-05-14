@@ -68,4 +68,39 @@ describe('Employee crud', () => {
     });
   });
 
+  describe('Updating data', () => {
+    beforeEach(async () => {
+      const firstDbEmployee = new Employee(employeeOne);
+      await firstDbEmployee.save();
+
+      const secondDbEmployee = new Employee(employeeTwo);
+      await secondDbEmployee.save();
+    });
+
+    afterEach(async () => {
+      await Employee.deleteMany();
+    });
+
+    it('should properly update one document with "updateOne" method', async () => {
+      await Employee.updateOne({ firstName: employeeOne.firstName }, { $set: { firstName: 'Alex' } });
+      const updatedEmployee = await Employee.findOne({ firstName: 'Alex' });
+      expect(updatedEmployee).to.not.be.null;
+    });
+
+    it('should properly update one document with "save" method', async () => {
+      const employee = await Employee.findOne({ firstName: employeeOne.firstName });
+      employee.firstName = 'Alex';
+      await employee.save();
+
+      const updatedEmployee = await Employee.findOne({ firstName: 'Alex' });
+      expect(updatedEmployee).to.not.be.null;
+    });
+
+    it('should properly update multiple documents with "updateMany" method', async () => {
+      await Employee.updateMany({}, { $set: { firstName: 'Updated!', lastName: 'Updated!', department: 'Updated!' } });
+      const employees = await Employee.find({ firstName: 'Updated!', lastName: 'Updated!', department: 'Updated!' });
+      expect(employees.length).to.be.equal(2);
+    });
+  });
+
 });
