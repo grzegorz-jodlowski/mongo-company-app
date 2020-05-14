@@ -46,6 +46,16 @@ describe('Department crud', () => {
     });
   });
 
+  describe('Creating data', () => {
+    after(async () => {
+      await Department.deleteMany();
+    });
 
+    it('should insert new document with "insertOne" method', async () => {
+      const department = new Department({ name: 'Department #1' });
+      await department.save();
+      expect(department.isNew).to.be.false;
+    });
+  });
 
 });
