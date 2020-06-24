@@ -1,5 +1,5 @@
 <p align="center">
-<a href="https://github.com/grzegorz-jodlowski/mongo-company-app"><img src="./mongoose.jpg" title="company-app" alt="snippet of company app source code"></a>
+<a href="https://github.com/grzegorz-jodlowski/mongo-company-app"><img src="img/mongoose.jpg" title="company-app" alt="snippet of company app source code"></a>
 </p>
 
 
@@ -16,7 +16,7 @@
 - [What I learned?](#what)
 - [Interesting code snippet](#what)
 - [Installation and quick start](#install)
-- [NPM scripts](#npmscripts)
+- [NPM scripts](#npm)
 
 </br>
 
@@ -152,7 +152,7 @@ or
 yarn start
 ```
 
-## <a name="npmscripts"></a>NPM scripts
+## <a name="npm"></a>NPM scripts
 
 There are 3 main scripts to speed up work:
 
